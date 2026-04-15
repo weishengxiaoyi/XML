@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Display and Transform XML</title>
+  <script type="text/javascript">
+    function display() {
+      // Change these to your actual file names (in the same folder as this HTML file)
+      var xmlURL = "https://raw.githubusercontent.com/alfred311/outcome-3-badge/main/badges.xml";
+      var xmlstyleURL = "https://raw.githubusercontent.com/weishengxiaoyi/XML/refs/heads/main/style.xsl?token=GHSAT0AAAAAADWDRY2G5RCM3WZN6JODPKPG2O7RQTQ";
+
+      var request;
+      try {
+        if (window.XMLHttpRequest) {
+          request = new XMLHttpRequest();
+        } else {
+          request = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+
+        // Load XML
+        request.open("GET", xmlURL, false);
+        request.send();
+        var xmlDoc = request.responseXML;
+
+        // Load XSLT
+        request.open("GET", xmlstyleURL, false);
+        request.send();
+        var xslDoc = request.responseXML;
+
+        // Transform and display
+        if (window.ActiveXObject) {
+          var result = xmlDoc.transformNode(xslDoc);
+          document.getElementById("output").innerHTML = result;
+        } else {
+          var processor = new XSLTProcessor();
+          processor.importStylesheet(xslDoc);
+          var fragment = processor.transformToFragment(xmlDoc, document);
+          document.getElementById("output").appendChild(fragment);
+        }
+      } catch (err) {
+        alert("Error: " + err);
+      }
+    }
+  </script>
+</head>
+<body onload="display()">
+  <div id="output"></div>
+</body>
+</html>
